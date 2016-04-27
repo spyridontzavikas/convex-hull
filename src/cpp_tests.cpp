@@ -3,16 +3,14 @@
 // for explanation of orientation()
 #include <iostream>
 #include <vector>
+#include <set>
 #include <cassert>
 #include <stack>
 #include <stdlib.h>
-using namespace std;
+#include <boost/optional.hpp>
 
-struct Point
-{
-    int x, y;
-};
 
+/*
 // A globle point needed for  sorting points with reference
 // to  the first point Used in compare function of qsort()
 Point p0;
@@ -73,23 +71,25 @@ int compare(const void *vp1, const void *vp2)
 }
 
 // Prints convex hull of a set of n points.
-std::vector<Point> convexHull(std::vector<Point> points, int n)
+std::vector<Point> convexHull(std::vector<Point> points)
 {
    // Find the bottommost point
-   int ymin = points[0].y, min = 0;
-   for (int i = 1; i < n; i++)
-   {
-     int y = points[i].y;
-
-     // Pick the bottom-most or chose the left
-     // most point in case of tie
-     if ((y < ymin) || (ymin == y &&
-         points[i].x < points[min].x))
-        ymin = points[i].y, min = i;
+   int ymin = points[0].y;
+   int min = 0;
+   for (int i = 1; i < points.size(); i++) {
+	   int y = points[i].y;
+		// Pick the bottom-most or chose the left
+		// most point in case of tie
+		if ((y < ymin) || (ymin == y && points[i].x < points[min].x)) {
+			ymin = points[i].y;
+			min = i;
+		}
    }
 
    // Place the bottom-most point at first position
-   swap(points[0], points[min]);
+   auto initial = points[0];
+   points[0] = points[min];
+   points[min] = initial;
 
    // Sort n-1 points with respect to the first point.
    // A point p1 comes before p2 in sorted ouput if p2
@@ -127,6 +127,7 @@ std::vector<Point> convexHull(std::vector<Point> points, int n)
    S.push(points[0]);
    S.push(points[1]);
    S.push(points[2]);
+   std::cout << "SIZE: " << S.size() << std::endl;
 
    // Process remaining n-3 points
    for (int i = 3; i < m; i++)
@@ -144,12 +145,60 @@ std::vector<Point> convexHull(std::vector<Point> points, int n)
    while (!S.empty())
    {
        Point p = S.top();
-       cout << "(" << p.x << ", " << p.y <<")" << endl;
+       std::cout << "(" << p.x << ", " << p.y <<")" << endl;
        convex_hull_edges.push_back(p);
        S.pop();
    }
    return convex_hull_edges;
+}*/
+
+struct Point
+{
+    int x, y;
+};
+
+inline bool operator==(const Point& lhs, const Point& rhs) {
+	return ((lhs.x == rhs.x) && (lhs.y == rhs.y));
 }
+
+struct Edge {
+	Point start;
+	Point end;
+};
+
+inline bool operator==(const Edge& lhs, const Edge& rhs) {
+	return (((lhs.start==rhs.start) and (lhs.end == rhs.end)) or
+	        ((lhs.start==rhs.end)   and (lhs.end == rhs.start)));
+}
+
+std::set<Edge> convexHullBruteForce(std::vector<Point> points) {
+	std::set<Edge> result_edges;
+	for (unsigned i=0; i<points.size(); ++i) {
+		for (unsigned j=0; j<points.size(); ++j) {
+			boost::optional<bool> same_half_plane;
+			bool is_edge = true;
+			//ax+by=c ,  a = y2-y1, b = x1-x2, c = x1y2 - y1x2
+			double a = points[j].y - points[i].y;
+			double b = points[i].x - points[j].x;
+			double c = points[i].x * points[j].y - points[j].x * points[i].y;
+ 			for (unsigned k=0; (k<points.size()) && (k != i) && (k == j); ++k) {
+				double planar = points[k].x * a + points[k].y * b - c;
+				if (!same_half_plane) {
+					same_half_plane = (planar > 0.0);
+				}
+				else if (*same_half_plane != (planar > 0.0)) {
+					is_edge = false;
+					break;
+				}
+			}
+ 			if (is_edge) {
+ 				result_edges.insert(Edge{points[i], points[j]});
+ 			}
+		}
+	}
+	return result_edges;
+}
+
 
 void assert_algorithm_output(std::vector<Point> convex_edges) {
     assert(convex_edges[0].x == 0);
@@ -163,16 +212,19 @@ void assert_algorithm_output(std::vector<Point> convex_edges) {
 }
 
 
-
-
 // Driver program to test above functions
 int main()
 {
     std::vector<Point> points = {{0, 3}, {1, 1}, {2, 2}, {4, 4},
                                  {0, 0}, {1, 2}, {3, 1}, {3, 3}};
     int n = sizeof(points)/sizeof(points[0]);
-    auto convex_edges = convexHull(points, n);
-    assert_algorithm_output(convex_edges);
+    auto convex_edges = convexHullBruteForce(points);
+    std::cout << "Convex_edges size: " << convex_edges.size() << std::endl;
+    for (Edge edge: convex_edges) {
+    	std::cout << "Start: " << edge.start.x << " | " << edge.start.y << std::endl;
+    	std::cout << "End: "   << edge.end.x   << " | " << edge.end.y   << std::endl;
+    }
+//    assert_algorithm_output(convex_edges);
     std::cout << "OK" << std::endl;
     return 0;
 }
