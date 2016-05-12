@@ -1,5 +1,5 @@
-waf3*
-waf-*
+.waf3*
+.waf-*
 .hg*
 \build
 .lock-waf*
