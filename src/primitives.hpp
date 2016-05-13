@@ -2,6 +2,8 @@
 #define PRIMITIVES_HPP
 
 #include <iostream>
+#include <cmath>
+#include <set>
 
 struct Point
 {
@@ -25,6 +27,8 @@ inline std::ostream& operator<<(std::ostream& stream, const Point& point) {
     return stream;
 }
 
+enum class rotation { COLINEAR, CLOCKWISE, COUNTERCLOCKWISE };
+
 struct Edge {
     Edge(Point start, Point end)
         : start{start}
@@ -32,6 +36,23 @@ struct Edge {
     {}
     Point start;
     Point end;
+
+    bool is_point_on_edge(const Point& point) const {
+        return (point.x <= std::max(start.x, end.x) && point.x >= std::min(start.x, end.x) &&
+                point.y <= std::max(start.y, end.y) && point.y >= std::min(start.y, end.y));
+    }
+
+    rotation point_edge_rotation(const Point& point_to_check) const {
+        double a = end.y - start.y;
+        double b = end.x - start.x;
+        double c = start.x * end.y - end.x * start.y;
+        double eq_result = (a * point_to_check.x - b * point_to_check.y - c);
+
+        if (std::abs(eq_result) <= 0.00001) return rotation::COLINEAR;
+        else if (eq_result > 0.00001)      return rotation::CLOCKWISE;
+        else                               return rotation::COUNTERCLOCKWISE;
+    }
+
 };
 
 inline bool operator==(const Edge& lhs, const Edge& rhs) {
@@ -44,19 +65,36 @@ inline std::ostream& operator<<(std::ostream& stream, const Edge& edge) {
     return stream;
 }
 
-bool is_left_of_line(const Point& point_to_check, const Edge& reference, bool accept_colinear=false) {
-    double a = reference.end.y - reference.start.y;
-    double b = reference.end.x - reference.start.x;
-    double c = reference.start.x * reference.end.y - reference.end.x * reference.start.y;
-    double eq_result = (a * point_to_check.x - b * point_to_check.y - c);
-    if(accept_colinear)
-        return eq_result < 0.0001;
+bool is_left_of_line(const Point& point_to_check, const Point& line_start, const Point& line_end, bool accept_colinear=false) {
+    if (accept_colinear)
+    	return (Edge(line_start, line_end).point_edge_rotation(point_to_check) != rotation::CLOCKWISE);
     else
-        return eq_result < 0.0;
+    	return (Edge(line_start, line_end).point_edge_rotation(point_to_check) != rotation::COUNTERCLOCKWISE);
 }
 
-bool is_left_of_line(Point point_to_check, Point line_start, Point line_end, bool accept_colinear=false) {
-    return is_left_of_line(point_to_check, Edge(line_start, line_end), accept_colinear);
+bool edges_intersect(const Edge& edge1, const Edge& edge2) {
+    rotation o1 = edge1.point_edge_rotation(edge2.start);
+    rotation o2 = edge1.point_edge_rotation(edge2.end);
+    rotation o3 = edge2.point_edge_rotation(edge1.start);
+    rotation o4 = edge2.point_edge_rotation(edge1.end);
+
+    if (o1 != o2 && o3 != o4) return true;
+
+    if (o1 == rotation::COLINEAR && edge1.is_point_on_edge(edge2.start)) return true;
+    if (o2 == rotation::COLINEAR && edge1.is_point_on_edge(edge2.end))   return true;
+    if (o3 == rotation::COLINEAR && edge2.is_point_on_edge(edge1.start)) return true;
+    if (o4 == rotation::COLINEAR && edge2.is_point_on_edge(edge1.end))   return true;
+    return false;
+}
+
+void lineSegmentIntersectionPlaneSweep(std::vector<Edge> segments) {
+	std::set<Point> control_points;
+	for (Edge segment : segments) {
+		control_points.emplace(segment.start);
+		control_points.emplace(segment.end);
+	}
+
+
 }
 
 

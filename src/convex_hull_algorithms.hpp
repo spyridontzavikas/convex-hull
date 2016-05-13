@@ -1,6 +1,7 @@
 #ifndef CONVEX_HULL_ALGORITHMS_HPP
 #define CONVEX_HULL_ALGORITHMS_HPP
 
+#include <boost/optional.hpp>
 
 std::vector<Edge> convexHullBruteForce(std::vector<Point> points) {
     std::vector<Edge> result_edges;
@@ -41,7 +42,7 @@ std::vector<Edge> convexHullGiftWrapping(const std::vector<Point>& points) {
         initializing = false;
         Point endpoint = points[0];
         for (unsigned i=0; i<points.size(); ++i) {
-            if ((endpoint == start_edge) || (is_left_of_line(points[i], Edge(start_edge, endpoint)))) {
+            if ((endpoint == start_edge) || (Edge(start_edge, endpoint).point_edge_rotation(points[i]) == rotation::COUNTERCLOCKWISE)) {
                 endpoint = points[i];
             }
         }
