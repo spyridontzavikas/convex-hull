@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <cmath>
-#include <set>
 
 struct Point
 {
@@ -65,6 +64,10 @@ inline std::ostream& operator<<(std::ostream& stream, const Edge& edge) {
     return stream;
 }
 
+inline bool operator<(const Edge& lhs, const Edge& rhs) {
+    return (lhs.start.x < rhs.start.x);
+}
+
 bool is_left_of_line(const Point& point_to_check, const Point& line_start, const Point& line_end, bool accept_colinear=false) {
     if (accept_colinear)
     	return (Edge(line_start, line_end).point_edge_rotation(point_to_check) != rotation::CLOCKWISE);
@@ -86,16 +89,5 @@ bool edges_intersect(const Edge& edge1, const Edge& edge2) {
     if (o4 == rotation::COLINEAR && edge2.is_point_on_edge(edge1.end))   return true;
     return false;
 }
-
-void lineSegmentIntersectionPlaneSweep(std::vector<Edge> segments) {
-	std::set<Point> control_points;
-	for (Edge segment : segments) {
-		control_points.emplace(segment.start);
-		control_points.emplace(segment.end);
-	}
-
-
-}
-
 
 #endif // PRIMITIVES_HPP
