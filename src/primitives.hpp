@@ -21,6 +21,10 @@ inline bool operator<(const Point& lhs, const Point& rhs) {
     return ( (lhs.x < rhs.x) || (lhs.x == rhs.x && lhs.y < rhs.y));
 }
 
+inline bool operator>(const Point& lhs, const Point& rhs) {
+    return ( (lhs.x > rhs.x) || (lhs.x == rhs.x && lhs.y > rhs.y));
+}
+
 inline std::ostream& operator<<(std::ostream& stream, const Point& point) {
     stream << point.x << ", " << point.y;
     return stream;
@@ -32,10 +36,19 @@ struct Edge {
     Edge(Point start, Point end)
         : start{start}
         , end{end}
-    {}
+    {
+    	normalize();
+    }
     Point start;
     Point end;
 
+    void normalize() {
+    	if (start > end) {
+    		Point temp = start;
+    		start = end;
+    		end = temp;
+    	}
+    }
     bool is_point_on_edge(const Point& point) const {
         return (point.x <= std::max(start.x, end.x) && point.x >= std::min(start.x, end.x) &&
                 point.y <= std::max(start.y, end.y) && point.y >= std::min(start.y, end.y));

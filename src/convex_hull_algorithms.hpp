@@ -46,7 +46,7 @@ std::vector<Edge> convexHullGiftWrapping(const std::vector<Point>& points) {
                 endpoint = points[i];
             }
         }
-        result_edges.push_back(Edge(start_edge, endpoint));
+        result_edges.push_back(Edge{start_edge, endpoint});
         start_edge = endpoint;
     }
     return result_edges;
@@ -81,7 +81,7 @@ std::vector<Edge> convexHullUpperLower(std::vector<Point>& points) {
 
     Point initial_point = upper_hull[0];
     for (unsigned i=1; i<upper_hull.size(); ++i) {
-        result_edges.push_back(Edge(initial_point, upper_hull[i]));
+        result_edges.push_back(Edge{initial_point, upper_hull[i]});
         initial_point = upper_hull[i];
     }
 

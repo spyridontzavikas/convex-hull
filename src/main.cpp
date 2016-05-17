@@ -34,7 +34,15 @@ int main()
                                  {0, 0}, {1, 2}, {3, 1}, {3, 3}};
     auto convex_brute_edges = convexHullBruteForce(points);
     assert_convex_hull_output(convex_brute_edges);
+    std::cout << "BRUTE_FORCE" << std::endl;
+    for (auto conv : convex_brute_edges ) {
+    	std::cout << conv << std::endl;
+    }
     auto convex_gift_edges = convexHullGiftWrapping(points);
+    std::cout << "GIFT" << std::endl;
+    for (auto conv : convex_gift_edges ) {
+    	std::cout << conv << std::endl;
+    }
     assert_convex_hull_output(convex_gift_edges);
     auto convex_upper_lower_edges = convexHullUpperLower(points);
     assert_convex_hull_output(convex_upper_lower_edges);
