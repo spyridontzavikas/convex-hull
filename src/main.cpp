@@ -7,6 +7,7 @@
 #include <src/primitives.hpp>
 #include <src/convex_hull_algorithms.hpp>
 #include <src/intersection_algorithms.hpp>
+#include <src/art_gallery.hpp>
 
 
 void assert_convex_hull_output(std::vector<Edge> convex_edges) {
@@ -46,6 +47,13 @@ int main()
 
     std::set<std::pair<Edge, Edge> > intersections = line_segment_intersection::lineSegmentIntersectionPlaneSweep(line_segments);
     assert_line_segment_intersection_output(intersections);
+
+//    std::vector<Edge> polygon { { Point{0, 0},  Point{3, 2}  }, { Point{3, 2},  Point{6, 2}  },
+//							    { Point{6, 2},  Point{8, -1} }, { Point{8, -1}, Point{7, -4} },
+//							    { Point{7, -4}, Point{3, -3} }, { Point{3, -3}, Point{3, 0}  },
+//							    { Point{3, 0},  Point{0, 0} } };
+    std::set<Point> polygon { Point{0, 0},  Point{3, 2}, Point{6, 2},  Point{8, -1}, Point{7, -4}, Point{3, -3}, Point{3, 0} };
+    polygonTriangulation(polygon);
     std::cout << "No assert was triggered." << std::endl;
     return 0;
 }
