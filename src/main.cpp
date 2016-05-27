@@ -44,7 +44,7 @@ int main()
 									 { Point{0, 0}, Point{6, 6}  }, { Point{1, 0}, Point{15, 2} },
 									 { Point{2, 0}, Point{14, 8} }, { Point{3, 0}, Point{13, 2} } };
 
-    std::set<std::pair<Edge, Edge> > intersections = lineSegmentIntersectionPlaneSweep(line_segments);
+    std::set<std::pair<Edge, Edge> > intersections = line_segment_intersection::lineSegmentIntersectionPlaneSweep(line_segments);
     assert_line_segment_intersection_output(intersections);
     std::cout << "No assert was triggered." << std::endl;
     return 0;
