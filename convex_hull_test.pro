@@ -8,4 +8,6 @@ SOURCES += src/main.cpp
 
 HEADERS += \
     src/primitives.hpp \
-    src/convex_hull_algorithms.hpp
+    src/convex_hull_algorithms.hpp \
+    src/art_gallery.hpp \
+    src/intersection_algorithms.hpp

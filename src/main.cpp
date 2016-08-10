@@ -52,8 +52,8 @@ int main()
 //							    { Point{6, 2},  Point{8, -1} }, { Point{8, -1}, Point{7, -4} },
 //							    { Point{7, -4}, Point{3, -3} }, { Point{3, -3}, Point{3, 0}  },
 //							    { Point{3, 0},  Point{0, 0} } };
-    std::set<Point> polygon { Point{0, 0},  Point{3, 2}, Point{6, 2},  Point{8, -1}, Point{7, -4}, Point{3, -3}, Point{3, 0} };
-    polygonTriangulation(polygon);
+//    std::set<Point> polygon { Point{0, 0},  Point{3, 2}, Point{6, 2},  Point{8, -1}, Point{7, -4}, Point{3, -3}, Point{3, 0} };
+//    polygonTriangulation(polygon);
     std::cout << "No assert was triggered." << std::endl;
     return 0;
 }

@@ -5,8 +5,8 @@
 void polygonTriangulation(std::set<Edge> polygon) {
 
 	std::cout << "POINTS" << std::endl;
-	for (Point pt: polygon) {
-		std::cout << pt << std::endl;
+    for (Edge e: polygon) {
+        std::cout << e << std::endl;
 	}
 }
 
